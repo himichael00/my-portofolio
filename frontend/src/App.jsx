@@ -5,6 +5,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/admin/Dashboard'
 import CreatePost from './pages/admin/CreatePost'
 import EditPost from './pages/admin/EditPost'
+import PostDetail from './pages/PostDetail'
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth()
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/admin/posts/create" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
           <Route path="/admin/posts/edit/:id" element={<ProtectedRoute><EditPost /></ProtectedRoute>} />
+          <Route path="/posts/:id" element={<PostDetail />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

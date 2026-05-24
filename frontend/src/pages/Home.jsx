@@ -117,7 +117,11 @@ export default function Home() {
           ) : (
             <div className="grid md:grid-cols-2 gap-6">
               {posts.map(post => (
-                <div key={post.id} className="bg-gray-900 rounded-2xl overflow-hidden border border-gray-800 hover:border-gray-600 transition group">
+                <div
+                  key={post.id}
+                  onClick={() => navigate(`/posts/${post.id}`)}
+                  className="bg-gray-900 rounded-2xl overflow-hidden border border-gray-800 hover:border-gray-600 transition group cursor-pointer"
+                >
                   {post.image_url && (
                     <img
                       src={post.image_url}
