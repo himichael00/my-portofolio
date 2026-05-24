@@ -11,7 +11,7 @@ export default function Dashboard() {
 
   const fetchPosts = async () => {
     try {
-      const res = await axios.get('http://127.0.0.1:8000/posts/')
+      const res = await axios.get('https://my-portofolio.up.railway.app/posts/')
       setPosts(res.data)
     } catch (err) {
       console.error(err)
@@ -25,7 +25,7 @@ export default function Dashboard() {
   const handleDelete = async (id) => {
     if (!confirm('Are you sure you want to delete this post?')) return
     try {
-      await axios.delete(`http://127.0.0.1:8000/posts/${id}`, {
+      await axios.delete(`https://my-portofolio.up.railway.app/posts/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchPosts()

@@ -10,7 +10,7 @@ export default function Home() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get('http://127.0.0.1:8000/posts/')
+        const res = await axios.get('https://my-portofolio.up.railway.app/posts/')
         setPosts(res.data)
       } catch (err) {
         console.error(err)

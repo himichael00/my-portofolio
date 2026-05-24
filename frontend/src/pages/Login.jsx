@@ -16,7 +16,7 @@ export default function Login() {
     setLoading(true)
     setError('')
     try {
-      const res = await axios.post('http://127.0.0.1:8000/auth/login', {
+      const res = await axios.post('https://my-portofolio.up.railway.app/auth/login', {
         username,
         password
       })

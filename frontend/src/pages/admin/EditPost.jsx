@@ -24,7 +24,7 @@ export default function EditPost() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/posts/${id}`)
+        const res = await axios.get(`https://my-portofolio.up.railway.app/posts/${id}`)
         const { title, description, github_url, demo_url, image_url, tags } = res.data
         setForm({
           title,
@@ -59,7 +59,7 @@ export default function EditPost() {
     formData.append('file', file)
 
     try {
-      const res = await axios.post('http://127.0.0.1:8000/posts/upload-image', formData, {
+      const res = await axios.post('https://my-portofolio.up.railway.app/posts/upload-image', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
@@ -78,7 +78,7 @@ export default function EditPost() {
     setLoading(true)
     setError('')
     try {
-      await axios.put(`http://127.0.0.1:8000/posts/${id}`, form, {
+      await axios.put(`https://my-portofolio.up.railway.app/posts/${id}`, form, {
         headers: { Authorization: `Bearer ${token}` }
       })
       navigate('/admin')

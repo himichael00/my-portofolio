@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
         return
       }
       try {
-        await axios.get('http://127.0.0.1:8000/auth/verify', {
+        await axios.get('https://my-portofolio.up.railway.app/auth/verify', {
           headers: { Authorization: `Bearer ${storedToken}` }
         })
         setToken(storedToken)
