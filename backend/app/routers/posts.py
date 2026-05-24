@@ -3,8 +3,15 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from .. import models, schemas, auth
 from ..database import get_db
+import cloudinary
+import cloudinary.uploader
 import os
-import uuid
+
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET")
+)
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
@@ -20,12 +27,10 @@ def get_current_user(authorization: Optional[str] = Header(None), db: Session = 
         raise HTTPException(status_code=401, detail="User not found")
     return user
 
-# Public - get all posts
 @router.get("/", response_model=List[schemas.PostResponse])
 def get_posts(db: Session = Depends(get_db)):
     return db.query(models.Post).order_by(models.Post.created_at.desc()).all()
 
-# Public - get single post
 @router.get("/{post_id}", response_model=schemas.PostResponse)
 def get_post(post_id: int, db: Session = Depends(get_db)):
     post = db.query(models.Post).filter(models.Post.id == post_id).first()
@@ -33,7 +38,6 @@ def get_post(post_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Post not found")
     return post
 
-# Admin only - create post
 @router.post("/", response_model=schemas.PostResponse)
 def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     new_post = models.Post(**post.dict())
@@ -42,7 +46,6 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), current
     db.refresh(new_post)
     return new_post
 
-# Admin only - update post
 @router.put("/{post_id}", response_model=schemas.PostResponse)
 def update_post(post_id: int, post: schemas.PostUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     db_post = db.query(models.Post).filter(models.Post.id == post_id).first()
@@ -54,7 +57,6 @@ def update_post(post_id: int, post: schemas.PostUpdate, db: Session = Depends(ge
     db.refresh(db_post)
     return db_post
 
-# Admin only - delete post
 @router.delete("/{post_id}")
 def delete_post(post_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     db_post = db.query(models.Post).filter(models.Post.id == post_id).first()
@@ -69,13 +71,6 @@ async def upload_image(
     file: UploadFile = File(...),
     current_user: models.User = Depends(get_current_user)
 ):
-    ext = os.path.splitext(file.filename)[1]
-    filename = f"{uuid.uuid4()}{ext}"
-    filepath = f"uploads/{filename}"
-    
-    with open(filepath, "wb") as f:
-        content = await file.read()
-        f.write(content)
-    
-    BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:8000")
-    return {"image_url": f"{BASE_URL}/uploads/{filename}"}
+    content = await file.read()
+    result = cloudinary.uploader.upload(content)
+    return {"image_url": result["secure_url"]}
