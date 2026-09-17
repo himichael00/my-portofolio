@@ -3,7 +3,17 @@
   "buildCommand": "cd frontend && npm ci && npm run build",
   "outputDirectory": "frontend/dist",
   "rewrites": [
-    { "source": "/admin/:path*", "destination": "/index.html" },
-    { "source": "/posts/:path*", "destination": "/index.html" }
+    {
+      "source": "/api/:path*",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/posts/:path*",
+      "destination": "/index.html"
+    }
   ]
 }
