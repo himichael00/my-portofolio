@@ -19,8 +19,5 @@ frontend/dist/
 backend/.env
 frontend/.env
 
-# Vercel local metadata
-.vercel/
-
 # Editor
 .vscode/
