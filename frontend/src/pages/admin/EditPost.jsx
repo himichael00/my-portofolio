@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import axios from 'axios'
+import API_URL from '../../api'
 
 export default function EditPost() {
   const { id } = useParams()
@@ -24,7 +25,7 @@ export default function EditPost() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await axios.get(`https://my-portofolio.up.railway.app/posts/${id}`)
+        const res = await axios.get(`${API_URL}/posts/${id}`)
         const { title, description, github_url, demo_url, image_url, tags } = res.data
         setForm({
           title,
@@ -59,7 +60,7 @@ export default function EditPost() {
     formData.append('file', file)
 
     try {
-      const res = await axios.post('https://my-portofolio.up.railway.app/posts/upload-image', formData, {
+      const res = await axios.post(`${API_URL}/posts/upload-image`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
@@ -78,7 +79,7 @@ export default function EditPost() {
     setLoading(true)
     setError('')
     try {
-      await axios.put(`https://my-portofolio.up.railway.app/posts/${id}`, form, {
+      await axios.put(`${API_URL}/posts/${id}`, form, {
         headers: { Authorization: `Bearer ${token}` }
       })
       navigate('/admin')

@@ -1,8 +1,26 @@
+# Python
 backend/venv/
 backend/__pycache__/
 backend/app/__pycache__/
+__pycache__/
+*.py[cod]
+
+# Local database / generated uploads
 backend/*.db
 backend/uploads/
+
+# Node
 frontend/node_modules/
 frontend/dist/
+
+# Environment / secrets
 .env
+.env.*
+backend/.env
+frontend/.env
+
+# Vercel local metadata
+.vercel/
+
+# Editor
+.vscode/

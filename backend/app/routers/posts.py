@@ -1,35 +1,58 @@
-from fastapi import APIRouter, Depends, HTTPException, Header, UploadFile, File
-from sqlalchemy.orm import Session
+import os
 from typing import List, Optional
-from .. import models, schemas, auth
-from ..database import get_db
+
 import cloudinary
 import cloudinary.uploader
-import os
+from fastapi import APIRouter, Depends, File, Header, HTTPException, UploadFile
+from sqlalchemy.orm import Session
+
+from .. import auth, models, schemas
+from ..database import get_db
 
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
     api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET")
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
 )
 
-router = APIRouter(prefix="/posts", tags=["posts"])
+router = APIRouter(prefix="/api/posts", tags=["posts"])
 
-def get_current_user(authorization: Optional[str] = Header(None), db: Session = Depends(get_db)):
+
+def get_current_admin(
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db),
+):
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Not authenticated")
-    token = authorization.split(" ")[1]
+
+    token = authorization.split(" ", 1)[1]
     username = auth.verify_token(token)
     if not username:
         raise HTTPException(status_code=401, detail="Invalid token")
+
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
+    if not user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+
     return user
+
 
 @router.get("/", response_model=List[schemas.PostResponse])
 def get_posts(db: Session = Depends(get_db)):
     return db.query(models.Post).order_by(models.Post.created_at.desc()).all()
+
+
+@router.post("/upload-image")
+async def upload_image(
+    file: UploadFile = File(...),
+    current_user: models.User = Depends(get_current_admin),
+):
+    content = await file.read()
+    result = cloudinary.uploader.upload(content)
+    return {"image_url": result["secure_url"]}
+
 
 @router.get("/{post_id}", response_model=schemas.PostResponse)
 def get_post(post_id: int, db: Session = Depends(get_db)):
@@ -38,39 +61,49 @@ def get_post(post_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Post not found")
     return post
 
+
 @router.post("/", response_model=schemas.PostResponse)
-def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
-    new_post = models.Post(**post.dict())
+def create_post(
+    post: schemas.PostCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_admin),
+):
+    new_post = models.Post(**post.model_dump())
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
     return new_post
 
+
 @router.put("/{post_id}", response_model=schemas.PostResponse)
-def update_post(post_id: int, post: schemas.PostUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+def update_post(
+    post_id: int,
+    post: schemas.PostUpdate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_admin),
+):
     db_post = db.query(models.Post).filter(models.Post.id == post_id).first()
     if not db_post:
         raise HTTPException(status_code=404, detail="Post not found")
-    for key, value in post.dict().items():
+
+    for key, value in post.model_dump().items():
         setattr(db_post, key, value)
+
     db.commit()
     db.refresh(db_post)
     return db_post
 
+
 @router.delete("/{post_id}")
-def delete_post(post_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+def delete_post(
+    post_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_admin),
+):
     db_post = db.query(models.Post).filter(models.Post.id == post_id).first()
     if not db_post:
         raise HTTPException(status_code=404, detail="Post not found")
+
     db.delete(db_post)
     db.commit()
     return {"message": "Post deleted successfully"}
-
-@router.post("/upload-image")
-async def upload_image(
-    file: UploadFile = File(...),
-    current_user: models.User = Depends(get_current_user)
-):
-    content = await file.read()
-    result = cloudinary.uploader.upload(content)
-    return {"image_url": result["secure_url"]}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import API_URL from '../api'
 
 export default function Home() {
   const [posts, setPosts] = useState([])
@@ -10,7 +11,7 @@ export default function Home() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get('https://my-portofolio.up.railway.app/posts/')
+        const res = await axios.get(`${API_URL}/posts/`)
         setPosts(res.data)
       } catch (err) {
         console.error(err)

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import axios from 'axios'
+import API_URL from '../api'
 
 export default function Login() {
   const [username, setUsername] = useState('')
@@ -16,7 +17,7 @@ export default function Login() {
     setLoading(true)
     setError('')
     try {
-      const res = await axios.post('https://my-portofolio.up.railway.app/auth/login', {
+      const res = await axios.post(`${API_URL}/auth/login`, {
         username,
         password
       })

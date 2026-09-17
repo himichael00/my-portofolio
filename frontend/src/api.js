@@ -1,2 +1,3 @@
-const API_URL = 'https://my-portofolio.up.railway.app'
+const API_URL = import.meta.env.VITE_API_URL || '/api'
+
 export default API_URL

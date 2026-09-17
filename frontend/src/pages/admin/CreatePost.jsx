@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import axios from 'axios'
+import API_URL from '../../api'
 
 export default function CreatePost() {
   const [form, setForm] = useState({
@@ -34,7 +35,7 @@ export default function CreatePost() {
     formData.append('file', file)
 
     try {
-      const res = await axios.post('https://my-portofolio.up.railway.app/posts/upload-image', formData, {
+      const res = await axios.post(`${API_URL}/posts/upload-image`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
@@ -53,7 +54,7 @@ export default function CreatePost() {
     setLoading(true)
     setError('')
     try {
-      await axios.post('https://my-portofolio.up.railway.app/posts/', form, {
+      await axios.post(`${API_URL}/posts/`, form, {
         headers: { Authorization: `Bearer ${token}` }
       })
       navigate('/admin')

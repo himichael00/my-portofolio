@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import axios from 'axios'
+import API_URL from '../api'
 
 const AuthContext = createContext(null)
 
@@ -15,7 +16,7 @@ export function AuthProvider({ children }) {
         return
       }
       try {
-        await axios.get('https://my-portofolio.up.railway.app/auth/verify', {
+        await axios.get(`${API_URL}/auth/verify`, {
           headers: { Authorization: `Bearer ${storedToken}` }
         })
         setToken(storedToken)
