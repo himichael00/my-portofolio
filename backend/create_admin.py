@@ -1,11 +1,13 @@
 import os
 
+from pathlib import Path
 from dotenv import load_dotenv
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+load_dotenv(PROJECT_ROOT / ".env")
 
 from backend.app.database import SessionLocal, engine
 from backend.app import auth, models
-
-load_dotenv()
 
 username = os.getenv("ADMIN_USERNAME")
 password = os.getenv("ADMIN_PASSWORD")
@@ -14,10 +16,13 @@ if not username or not password:
     raise RuntimeError("ADMIN_USERNAME and ADMIN_PASSWORD must be set")
 
 models.Base.metadata.create_all(bind=engine)
+
 db = SessionLocal()
 
 try:
-    existing = db.query(models.User).filter(models.User.username == username).first()
+    existing = db.query(models.User).filter(
+        models.User.username == username
+    ).first()
 
     if existing:
         existing.hashed_password = auth.get_password_hash(password)

@@ -81,7 +81,7 @@ export default function Home() {
             <div>
               <p className="text-gray-400 leading-relaxed mb-4">
                 I recently graduated with a Bachelor's degree in Information Technology and completed my internship program.
-                I am currently working at a corporate company as an IT Specialist in Software Development.
+                I am currently working at a corporate company as a Research Engineer focused on Data Engineering.
               </p>
               <p className="text-gray-400 leading-relaxed">
                 Working in the IT field requires me to keep up with technological advancements.
@@ -91,7 +91,7 @@ export default function Home() {
             <div className="space-y-4">
               {[
                 { label: 'Name', value: 'Michael Rio Aditya' },
-                { label: 'Role', value: 'IT Specialist / Software Developer' },
+                { label: 'Role', value: 'Research Engineer' },
                 { label: 'Location', value: 'Indonesia' },
                 { label: 'Status', value: 'Open to opportunities' },
               ].map(item => (
@@ -203,7 +203,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="py-6 text-center text-gray-600 text-sm border-t border-gray-800">
-        Made with ❤️ by Michael Rio Aditya
+        Made with bored by Michael Rio Aditya
       </footer>
 
     </div>
