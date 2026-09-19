@@ -110,31 +110,11 @@ def get_posts(
     )
 
 
-@router.post(
-    "/upload-image",
-)
+@router.post("/upload/image")
 async def upload_image(
     file: UploadFile = File(...),
     current_user: models.User = Depends(get_current_admin),
 ):
-    """
-    Upload an image to Cloudinary.
-    Admin only.
-    """
-
-    if not file.filename:
-        raise HTTPException(
-            status_code=400,
-            detail="No file provided",
-        )
-
-    # Optional but useful validation
-    if not file.content_type or not file.content_type.startswith("image/"):
-        raise HTTPException(
-            status_code=400,
-            detail="Only image files are allowed",
-        )
-
     content = await file.read()
 
     if not content:
@@ -153,8 +133,8 @@ async def upload_image(
     except Exception as exc:
         raise HTTPException(
             status_code=500,
-            detail=f"Image upload failed: {str(exc)}",
-        )
+            detail="Image upload failed",
+        ) from exc
 
 
 # ---------------------------------------------------------------------------

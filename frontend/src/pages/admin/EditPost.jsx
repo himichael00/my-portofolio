@@ -60,7 +60,7 @@ export default function EditPost() {
     formData.append('file', file)
 
     try {
-      const res = await axios.post(`${API_URL}/posts/upload-image`, formData, {
+      const res = await axios.post('/api/posts/upload/image', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
