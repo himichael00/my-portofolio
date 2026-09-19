@@ -28,6 +28,9 @@ app.add_middleware(
 app.include_router(users.router)
 app.include_router(posts.router)
 
+print("REGISTERED ROUTES:")
+for route in app.routes:
+    print(route.path, getattr(route, "methods", None))
 
 @app.get("/api")
 def root():
